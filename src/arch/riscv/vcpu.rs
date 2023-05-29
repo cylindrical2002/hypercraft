@@ -219,6 +219,7 @@ pub struct VCpu<H: HyperCraftHal> {
     // gpt: G,
     // pub guest: Arc<Guest>,
     marker: PhantomData<H>,
+    marker1: PhantomData<H>,
 }
 
 impl<H: HyperCraftHal> VCpu<H> {
