@@ -18,10 +18,12 @@ QEMUPATH	?= ~/software/qemu/qemu-7.1.0/build/
 QEMU 		:= $(QEMUPATH)qemu-system-riscv64
 BOOTLOADER	:= bootloader/rustsbi-qemu.bin
 
-ROOTFS		?= guest/linux/rootfs.img
+GUESTPATH   := ../../guest
+
+ROOTFS		?= $(GUESTPATH)/linux/rootfs.img
 
 GUEST 		?= linux
-GUEST_ELF	?= guest/$(GUEST)/$(GUEST)
+GUEST_ELF	?= $(GUESTPATH)/$(GUEST)/$(GUEST)
 GUEST_BIN	?= $(GUEST_ELF).bin
 GUEST_DTB	?= $(GUEST_ELF).dtb
 
@@ -45,7 +47,7 @@ QEMUOPTS	= --machine virt -m 3G -bios $(BOOTLOADER) -nographic
 QEMUOPTS	+=-kernel $(APP_BIN)
 
 ifeq ($(GUEST), rCore-Tutorial-v3)
-	QEMUOPTS	+=-drive file=guest/rCore-Tutorial-v3/fs.img,if=none,format=raw,id=x0
+	QEMUOPTS	+=-drive file=$(GUESTPATH)/rCore-Tutorial-v3/fs.img,if=none,format=raw,id=x0
 	QEMUOPTS	+=-device virtio-blk-device,drive=x0
 	QEMUOPTS	+=-device virtio-gpu-device
 	QEMUOPTS	+=-device virtio-keyboard-device
@@ -53,7 +55,7 @@ ifeq ($(GUEST), rCore-Tutorial-v3)
 	QEMUOPTS 	+=-device virtio-net-device,netdev=net0
 	QEMUOPTS	+=-netdev user,id=net0,hostfwd=udp::6200-:2000
 else ifeq ($(GUEST), rtthread)
-	QEMUOPTS    +=-drive if=none,file=guest/rtthread/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0
+	QEMUOPTS    +=-drive if=none,file=$(GUESTPATH)/rtthread/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0
 	QEMUOPTS 	+=-netdev user,id=tap0 -device virtio-net-device,netdev=tap0,bus=virtio-mmio-bus.1
 	QEMUOPTS 	+=-device virtio-serial-device -chardev socket,host=127.0.0.1,port=4321,server=on,wait=off,telnet=on,id=console0 -device virtserialport,chardev=console0
 else ifeq ($(GUEST), linux)

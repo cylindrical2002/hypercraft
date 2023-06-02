@@ -11,7 +11,7 @@ use super::{
 };
 use crate::{
     arch::sbi::SBI_ERR_NOT_SUPPORTED, vcpus::VM_CPUS_MAX, GprIndex, GuestPageTableTrait,
-    GuestPhysAddr, GuestVirtAddr, HyperCraftHal, HyperError, HyperResult, VCpu, VmCpus, VmExitInfo,
+    GuestPhysAddr, GuestVirtAddr, HyperCraftHal, HyperError, HyperResult, VCpu, VmCpus, VmExitInfo, traits::VmTrait
 };
 use riscv_decode::Instruction;
 
@@ -23,9 +23,9 @@ pub struct VM<H: HyperCraftHal, G: GuestPageTableTrait> {
     plic: PlicState,
 }
 
-impl<H: HyperCraftHal, G: GuestPageTableTrait> VM<H, G> {
+impl<H: HyperCraftHal, G: GuestPageTableTrait> VmTrait<H, G> for VM<H, G> {
     /// Create a new VM with `vcpus` vCPUs and `gpt` as the guest page table.
-    pub fn new(vcpus: VmCpus<H>, gpt: G) -> HyperResult<Self> {
+    fn new(vcpus: VmCpus<H>, gpt: G) -> HyperResult<Self> {
         Ok(Self {
             vcpus,
             gpt,
@@ -35,14 +35,14 @@ impl<H: HyperCraftHal, G: GuestPageTableTrait> VM<H, G> {
     }
 
     /// Initialize `VCpu` by `vcpu_id`.
-    pub fn init_vcpu(&mut self, vcpu_id: usize) {
+    fn init_vcpu(&mut self, vcpu_id: usize) {
         let vcpu = self.vcpus.get_vcpu(vcpu_id).unwrap();
         vcpu.init_page_map(self.gpt.token());
     }
 
     #[allow(unused_variables, deprecated)]
     /// Run the host VM's vCPU with ID `vcpu_id`. Does not return.
-    pub fn run(&mut self, vcpu_id: usize) {
+    fn run(&mut self, vcpu_id: usize) {
         let mut vm_exit_info: VmExitInfo;
         let mut gprs = GeneralPurposeRegisters::default();
         loop {

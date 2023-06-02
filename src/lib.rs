@@ -23,11 +23,12 @@ extern crate log;
 #[path = "arch/riscv/mod.rs"]
 mod arch;
 #[cfg(target_arch = "x86_64")]
-#[path = "arch/dummy.rs"]
+#[path = "arch/x86/mod.rs"]
 mod arch;
 #[cfg(target_arch = "aarch64")]
-#[path = "arch/dummy.rs"]
+#[path = "arch/aarch/mod.rs"]
 mod arch;
+
 mod hal;
 mod memory;
 mod traits;
@@ -37,7 +38,11 @@ mod vcpus;
 pub type HyperResult<T = ()> = Result<T, HyperError>;
 
 pub use arch::{
-    init_hv_runtime, GprIndex, HyperCallMsg, NestedPageTable, PerCpu, VCpu, VmExitInfo, VM,
+    init_hv_runtime, GprIndex, HyperCallMsg, NestedPageTable, PerCpu, VCpu, VmExitInfo, VM, 
+};
+
+pub use traits::{
+    VmTrait
 };
 
 pub use hal::HyperCraftHal;
