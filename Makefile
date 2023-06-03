@@ -15,7 +15,7 @@ OBJCOPY     := rust-objcopy --binary-architecture=riscv64
 GDB			:= riscv64-unknown-elf-gdb
 
 QEMUPATH	?= ~/software/qemu/qemu-7.1.0/build/
-QEMU 		:= $(QEMUPATH)qemu-system-riscv64
+QEMU 		:= qemu-system-$(ARCH)
 BOOTLOADER	:= bootloader/rustsbi-qemu.bin
 
 GUESTPATH   := ../../guest
