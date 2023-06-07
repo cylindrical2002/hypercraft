@@ -1,7 +1,6 @@
 use defs::*;
-use tock_registers::fields::Field;
 use tock_registers::interfaces::{Readable, Writeable};
-use tock_registers::{register_bitfields, RegisterLongName};
+use tock_registers::RegisterLongName;
 
 /// Define each registers of hypervisor using.
 pub struct CSR {
@@ -116,7 +115,7 @@ impl<R: RegisterLongName, const V: u16> Writeable for ReadWriteCsr<R, V> {
         self.write_value(val_to_set);
     }
 }
-
+#[allow(dead_code)]
 pub mod defs {
     use tock_registers::register_bitfields;
     pub const CSR_SSTATUS: u16 = 0x100;
@@ -270,6 +269,7 @@ pub mod defs {
     ];
 }
 
+#[allow(dead_code)]
 pub mod traps {
     pub mod interrupt {
         pub const USER_SOFT: usize = 1 << 0;

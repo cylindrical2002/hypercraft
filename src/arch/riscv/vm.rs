@@ -1,29 +1,25 @@
 use core::panic;
 
 use super::{
-    devices::plic::{PlicState, MAX_CONTEXTS},
-    regs::GeneralPurposeRegisters,
-    sbi::BaseFunction,
-    traps,
-    vcpu::{self, VmCpuRegisters},
-    vm_pages::VmPages,
-    HyperCallMsg, RiscvCsrTrait, CSR,
+    devices::plic::PlicState, regs::GeneralPurposeRegisters, sbi::BaseFunction, traps,
+    vm_pages::VmPages, HyperCallMsg, RiscvCsrTrait, CSR,
 };
 use crate::{
-    arch::sbi::SBI_ERR_NOT_SUPPORTED, vcpus::VM_CPUS_MAX, GprIndex, GuestPageTableTrait,
-    GuestPhysAddr, GuestVirtAddr, HyperCraftHal, HyperError, HyperResult, VCpu, VmCpus, VmExitInfo, traits::VmTrait
+    arch::sbi::SBI_ERR_NOT_SUPPORTED, traits::VmTrait, GprIndex, HyperCraftHal, HyperError,
+    HyperResult, VmCpus, VmExitInfo,
 };
+use guest_page_table::{GuestMemoryInterface, GuestPhysAddr, GuestVirtAddr};
 use riscv_decode::Instruction;
 
 /// A VM that is being run.
-pub struct VM<H: HyperCraftHal, G: GuestPageTableTrait> {
+pub struct VM<H: HyperCraftHal, G: GuestMemoryInterface> {
     vcpus: VmCpus<H>,
     gpt: G,
     vm_pages: VmPages,
     plic: PlicState,
 }
 
-impl<H: HyperCraftHal, G: GuestPageTableTrait> VmTrait<H, G> for VM<H, G> {
+impl<H: HyperCraftHal, G: GuestMemoryInterface> VmTrait<H, G> for VM<H, G> {
     /// Create a new VM with `vcpus` vCPUs and `gpt` as the guest page table.
     fn new(vcpus: VmCpus<H>, gpt: G) -> HyperResult<Self> {
         Ok(Self {
@@ -146,7 +142,7 @@ impl<H: HyperCraftHal, G: GuestPageTableTrait> VmTrait<H, G> for VM<H, G> {
 }
 
 // Privaie methods implementation
-impl<H: HyperCraftHal, G: GuestPageTableTrait> VM<H, G> {
+impl<H: HyperCraftHal, G: GuestMemoryInterface> VM<H, G> {
     fn handle_page_fault(
         &mut self,
         inst_addr: GuestVirtAddr,

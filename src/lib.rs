@@ -1,4 +1,7 @@
 //! HyperCraft is a VMM crate.
+//! 
+//! Only For CPU Virtualization
+//! Memory Virtualization is in `guest_page_table` crate.
 
 #![no_std]
 #![allow(
@@ -6,10 +9,6 @@
     clippy::single_component_path_imports,
     clippy::collapsible_match,
     clippy::default_constructed_unit_structs,
-    dead_code,
-    non_upper_case_globals,
-    unused_imports,
-    unused_assignments
 )]
 #![deny(missing_docs, warnings)]
 #![feature(naked_functions, asm_const, negative_impls, stdsimd)]
@@ -19,6 +18,7 @@ extern crate alloc;
 #[macro_use]
 extern crate log;
 
+// Auto Compile
 #[cfg(target_arch = "riscv64")]
 #[path = "arch/riscv/mod.rs"]
 mod arch;
@@ -30,7 +30,6 @@ mod arch;
 mod arch;
 
 mod hal;
-mod memory;
 mod traits;
 mod vcpus;
 
@@ -38,18 +37,11 @@ mod vcpus;
 pub type HyperResult<T = ()> = Result<T, HyperError>;
 
 pub use arch::{
-    init_hv_runtime, GprIndex, HyperCallMsg, NestedPageTable, PerCpu, VCpu, VmExitInfo, VM, 
+    init_hv_runtime, GprIndex, HyperCallMsg, PerCpu, VCpu, VmExitInfo, VM, 
 };
 
-pub use traits::{
-    VmTrait
-};
-
+pub use traits::VmTrait;
 pub use hal::HyperCraftHal;
-pub use memory::{
-    GuestPageNum, GuestPageTableTrait, GuestPhysAddr, GuestVirtAddr, HostPageNum, HostPhysAddr,
-    HostVirtAddr,
-};
 pub use vcpus::VmCpus;
 
 /// The error type for hypervisor operation failures.

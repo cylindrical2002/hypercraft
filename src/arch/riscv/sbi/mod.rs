@@ -8,12 +8,19 @@ use dbcn::DebugConsoleFunction;
 use sbi_spec;
 use srst::ResetFunction;
 
+#[allow(unused)]
 pub const SBI_SUCCESS: usize = 0;
+#[allow(unused)]
 pub const SBI_ERR_FAILUER: isize = -1;
+#[allow(unused)]
 pub const SBI_ERR_NOT_SUPPORTED: isize = -2;
+#[allow(unused)]
 pub const SBI_ERR_INAVLID_PARAM: isize = -3;
+#[allow(unused)]
 pub const SBI_ERR_DENIED: isize = -4;
+#[allow(unused)]
 pub const SBI_ERR_INVALID_ADDRESS: isize = -5;
+#[allow(unused)]
 pub const SBI_ERR_ALREADY_AVAILABLE: isize = -6;
 
 /// The values returned from an SBI function call.
@@ -26,6 +33,7 @@ pub struct SbiReturn {
 }
 
 /// SBI return value conventions
+#[allow(dead_code)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SbiReturnTyoe {
     /// Legacy(v0.1) extensions return a single value in A0, usually with the convention that 0

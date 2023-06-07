@@ -1,4 +1,3 @@
-use alloc::boxed::Box;
 use core::arch::global_asm;
 use core::marker::PhantomData;
 use core::mem::size_of;
@@ -6,14 +5,13 @@ use memoffset::offset_of;
 use tock_registers::LocalRegisterCopy;
 
 // use alloc::sync::Arc;
-use riscv::register::{htinst, htval, hvip, scause, sstatus, stval};
+use riscv::register::{htinst, htval, scause, sstatus, stval};
 
 use crate::arch::vmexit::PrivilegeLevel;
-use crate::arch::{traps, RiscvCsrTrait, CSR};
-use crate::{
-    arch::sbi::SbiMessage, GuestPageTableTrait, GuestPhysAddr, GuestVirtAddr, HostPhysAddr,
-    HyperCraftHal, VmExitInfo,
-};
+use crate::arch::{RiscvCsrTrait, CSR};
+use crate::{arch::sbi::SbiMessage, HyperCraftHal, VmExitInfo};
+
+use guest_page_table::GuestPhysAddr;
 
 use super::csrs::defs::hstatus;
 use super::regs::{GeneralPurposeRegisters, GprIndex};
@@ -202,15 +200,6 @@ extern "C" {
     fn _run_guest(state: *mut VmCpuRegisters);
 }
 
-pub enum VmCpuStatus {
-    /// The vCPU is not powered on.
-    PoweredOff,
-    /// The vCPU is available to be run.
-    Runnable,
-    /// The vCPU has benn claimed exclusively for running on a (physical) CPU.
-    Running,
-}
-
 #[derive(Default)]
 /// A virtual CPU within a guest
 pub struct VCpu<H: HyperCraftHal> {
@@ -306,6 +295,7 @@ impl<H: HyperCraftHal> VCpu<H> {
 
         let scause = scause::read();
         use scause::{Exception, Interrupt, Trap};
+        // Use SCAUSE to find a VMExitInfo for VM to deal with
         match scause.cause() {
             Trap::Exception(Exception::VirtualSupervisorEnvCall) => {
                 let sbi_msg = SbiMessage::from_regs(regs.guest_regs.gprs.a_regs()).ok();
@@ -376,6 +366,7 @@ impl<H: HyperCraftHal> VCpu<H> {
     }
 }
 
+#[allow(dead_code)]
 // Private methods implements
 impl<H: HyperCraftHal> VCpu<H> {
     /// Delivers the given exception to the vCPU, setting its register state

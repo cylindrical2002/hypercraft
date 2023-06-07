@@ -7,6 +7,7 @@ use crate::{
 /// have one M-mode context and one S-mode context.
 pub const MAX_CONTEXTS: usize = 2 * MAX_CPUS;
 
+#[allow(dead_code)]
 pub struct PlicState {
     base: usize,
     source_priority: [u32; 512],

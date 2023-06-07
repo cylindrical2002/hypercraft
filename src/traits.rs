@@ -1,6 +1,9 @@
 use crate::{
-    GprIndex, GuestPageTableTrait, GuestPhysAddr, HyperCraftHal, HyperResult, VCpu, VmCpus,
+    GprIndex, HyperCraftHal, HyperResult, VCpu, VmCpus,
     VmExitInfo,
+};
+use guest_page_table::{
+    GuestMemoryInterface, GuestPhysAddr,
 };
 
 /// Trait for VCpu struct.
@@ -38,7 +41,7 @@ pub trait PerCpuTrait<H: HyperCraftHal> {
 }
 
 /// Trait for VM struct.
-pub trait VmTrait<H: HyperCraftHal, G: GuestPageTableTrait> {
+pub trait VmTrait<H: HyperCraftHal, G: GuestMemoryInterface> {
     /// Create a new VM with `vcpus` vCPUs and `gpt` as the guest page table.
     fn new(vcpus: VmCpus<H>, gpt: G) -> HyperResult<Self>
     where

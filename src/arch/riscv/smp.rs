@@ -1,13 +1,13 @@
 //! reference: https://github.com/rivosinc/salus/blob/main/src/smp.rs
 use core::arch::asm;
 
-use alloc::{collections::VecDeque, vec::Vec};
+use alloc::collections::VecDeque;
+use memory_addr::PAGE_SIZE_4K;
 use spin::{Mutex, Once};
 
-use crate::{
-    memory::PAGE_SIZE_4K, GuestPageTableTrait, GuestPhysAddr, GuestVirtAddr, HostPhysAddr,
-    HostVirtAddr, HyperCraftHal, HyperError, HyperResult, VCpu,
-};
+use crate::{HyperCraftHal, HyperError, HyperResult, VCpu};
+
+use guest_page_table::{GuestPhysAddr, HostPhysAddr, HostVirtAddr};
 
 use super::detect::detect_h_extension;
 

@@ -1,7 +1,6 @@
 mod csrs;
 mod detect;
 mod devices;
-mod ept;
 mod regs;
 mod sbi;
 mod smp;
@@ -10,8 +9,6 @@ mod vm;
 mod vm_pages;
 mod vmexit;
 
-use detect::detect_h_extension;
-pub use ept::NestedPageTable;
 pub use regs::GprIndex;
 pub use sbi::SbiMessage as HyperCallMsg;
 pub use smp::PerCpu;
@@ -19,10 +16,7 @@ pub use vcpu::VCpu;
 pub use vm::VM;
 pub use vmexit::VmExitInfo;
 
-use self::csrs::{traps, ReadWriteCsr, RiscvCsrTrait, CSR};
-use self::devices::plic::PlicState;
-use self::vcpu::VmCpuRegisters;
-use sbi::BaseFunction;
+use self::csrs::{traps, RiscvCsrTrait, CSR};
 
 /// Initialize the hypervisor runtime.
 pub fn init_hv_runtime() {

@@ -1,4 +1,4 @@
-use crate::{GuestPageTableTrait, HostPageNum, HostPhysAddr};
+use guest_page_table::{HostPageNum, HostPhysAddr};
 
 /// The interfaces which the underlginh software(kernel or hypervisor) must implement.
 pub trait HyperCraftHal: Sized {
